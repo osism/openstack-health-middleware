@@ -105,7 +105,7 @@ Date: Wed, 14 Aug 2024 08:56:02 GMT
 }
 ```
 
-## Furture ideas:
+## Future ideas:
 
 - check processes like nova-compute if they are running (e.g. because logs stopped being written)
 - check the logs for errors
