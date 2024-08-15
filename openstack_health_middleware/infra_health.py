@@ -36,8 +36,7 @@ class InfraHealthCheck(pluginbase.HealthcheckBaseExtension):
     """
 
     class LocalEndpoint:
-        """LocalEndpoint class to receive incoming messages sent by the healthcheck.
-        """
+        """LocalEndpoint class to receive incoming messages sent by the healthcheck."""
 
         def __init__(self, notification_time):
             self.notification_time = notification_time
@@ -60,7 +59,7 @@ class InfraHealthCheck(pluginbase.HealthcheckBaseExtension):
                         self._payload = payload
                         self._message_received = True
 
-            LOG.debug('notification received %s:%s' % (publisher_id, event_type))
+            LOG.debug("notification received %s:%s" % (publisher_id, event_type))
             output = json.dumps(
                 {
                     "payload": payload,
@@ -74,10 +73,9 @@ class InfraHealthCheck(pluginbase.HealthcheckBaseExtension):
     def __init__(self, *args, **kwargs):
         super(InfraHealthCheck, self).__init__(*args, **kwargs)
         self.result_dict = {}
-        self.oslo_conf.register_opts(opts.INFRA_HEALTH_OPTS,
-                                     group='healthcheck')
-        self.messaging_timeout = self._conf_get('messaging_timeout')
-        self.database_timeout = self._conf_get('database_timeout')
+        self.oslo_conf.register_opts(opts.INFRA_HEALTH_OPTS, group="healthcheck")
+        self.messaging_timeout = self._conf_get("messaging_timeout")
+        self.database_timeout = self._conf_get("database_timeout")
         self.messaging_thread = None
         self.database_thread = None
         self.messaging_available = False
@@ -106,30 +104,44 @@ class InfraHealthCheck(pluginbase.HealthcheckBaseExtension):
 
         try:
             sender_transport = oslo_messaging.get_notification_transport(self.oslo_conf)
-            notifier_transport = oslo_messaging.get_notification_transport(self.oslo_conf)
+            notifier_transport = oslo_messaging.get_notification_transport(
+                self.oslo_conf
+            )
 
-            transport_url['url'] = self.oslo_conf['transport_url']
-            server = oslo_messaging.get_notification_listener(sender_transport,
-                                                              [oslo_messaging.Target(topic='healthcheck')],
-                                                              [local_endpoint],
-                                                              executor="threading")
+            transport_url["url"] = self.oslo_conf["transport_url"]
+            server = oslo_messaging.get_notification_listener(
+                sender_transport,
+                [oslo_messaging.Target(topic="healthcheck")],
+                [local_endpoint],
+                executor="threading",
+            )
 
             LOG.debug("Starting messaging server")
             server.start()
 
-            notifier = oslo_messaging.Notifier(notifier_transport, "healthcheck", driver="messaging",
-                                               topics=["healthcheck"])
+            notifier = oslo_messaging.Notifier(
+                notifier_transport,
+                "healthcheck",
+                driver="messaging",
+                topics=["healthcheck"],
+            )
 
             LOG.debug(f"Sending healthcheck message: {notification_time}")
-            notifier.info(ctxt={}, event_type="health_check.check_messaging",
-                          payload={"notification_time": notification_time})
+            notifier.info(
+                ctxt={},
+                event_type="health_check.check_messaging",
+                payload={"notification_time": notification_time},
+            )
 
             # wait until message was received or timeout was hit
             timeout = 0
-            while timeout < self.messaging_timeout and not local_endpoint.message_received:
+            while (
+                timeout < self.messaging_timeout and not local_endpoint.message_received
+            ):
                 LOG.debug(
                     f"Waiting for healthcheck notification to be received via messaging,"
-                    f" timeout: {timeout}/{self.messaging_timeout}s")
+                    f" timeout: {timeout}/{self.messaging_timeout}s"
+                )
                 time.sleep(1.0)
                 timeout = timeout + 1
 
@@ -144,9 +156,15 @@ class InfraHealthCheck(pluginbase.HealthcheckBaseExtension):
 
             if local_endpoint.message_received:
                 available.value = 1
-                result.update({"result": "Notification successfully received via messaging"})
+                result.update(
+                    {"result": "Notification successfully received via messaging"}
+                )
             else:
-                result.update({"result": f"Notification timed out after {self.messaging_timeout} seconds"})
+                result.update(
+                    {
+                        "result": f"Notification timed out after {self.messaging_timeout} seconds"
+                    }
+                )
         except Exception as e:
             result.update({"result": "Exception while checking messaging: " + str(e)})
 
@@ -167,7 +185,9 @@ class InfraHealthCheck(pluginbase.HealthcheckBaseExtension):
 
         try:
             engine = enginefacade.reader.get_engine()
-            database_connection['connection'] = enginefacade.cfg.CONF.get("database")['connection']
+            database_connection["connection"] = enginefacade.cfg.CONF.get("database")[
+                "connection"
+            ]
             LOG.debug("Connecting to DB")
             connection = engine.connect()
 
@@ -177,7 +197,9 @@ class InfraHealthCheck(pluginbase.HealthcheckBaseExtension):
                 available.value = 1
                 result.update({"result": "Connection to database is ok"})
         except Exception as e:
-            result.update({"result": "Exception while connecting to database: " + str(e)})
+            result.update(
+                {"result": "Exception while connecting to database: " + str(e)}
+            )
 
     def _mistify(self, text):
         return re.sub(r"//[^:]+:[^@]+", "//***:***", text)
@@ -188,20 +210,24 @@ class InfraHealthCheck(pluginbase.HealthcheckBaseExtension):
         # due to timeout handling checks are executed using multiprocessing lib
         manager = Manager()
 
-        messaging_available = Value('i', 0)
+        messaging_available = Value("i", 0)
         messaging_result = manager.dict()
         messaging_transport_url = manager.dict()
-        messaging_transport_url['url'] = "unknown transport url"
+        messaging_transport_url["url"] = "unknown transport url"
 
-        database_available = Value('i', 0)
+        database_available = Value("i", 0)
         database_result = manager.dict()
         database_connection = manager.dict()
-        database_connection['connection'] = "unknown connection string"
+        database_connection["connection"] = "unknown connection string"
 
-        process_messaging = Process(target=self.perform_messaging_check,
-                                    args=(messaging_available, messaging_result, messaging_transport_url))
-        process_database = Process(target=self.perform_db_check,
-                                   args=(database_available, database_result, database_connection))
+        process_messaging = Process(
+            target=self.perform_messaging_check,
+            args=(messaging_available, messaging_result, messaging_transport_url),
+        )
+        process_database = Process(
+            target=self.perform_db_check,
+            args=(database_available, database_result, database_connection),
+        )
 
         LOG.debug("Starting infra health checks")
         process_messaging.start()
@@ -214,25 +240,34 @@ class InfraHealthCheck(pluginbase.HealthcheckBaseExtension):
         # if no results where received just assume a timeout
         if not messaging_result:
             self.result_dict.update(
-                {"messaging": {"result": f"Notification timed out after {self.messaging_timeout} seconds"}})
+                {
+                    "messaging": {
+                        "result": f"Notification timed out after {self.messaging_timeout} seconds"
+                    }
+                }
+            )
         else:
             self.result_dict.update({"messaging": dict(messaging_result)})
 
         if not database_result:
             self.result_dict.update(
-                {"database": {"result": f"Connection timed out after {self.database_timeout} seconds"}})
+                {
+                    "database": {
+                        "result": f"Connection timed out after {self.database_timeout} seconds"
+                    }
+                }
+            )
         else:
             self.result_dict.update({"database": dict(database_result)})
 
-        transport_url = self._mistify(messaging_transport_url['url'])
-        db_connection = self._mistify(database_connection['connection'])
+        transport_url = self._mistify(messaging_transport_url["url"])
+        db_connection = self._mistify(database_connection["connection"])
 
-        self.result_dict['messaging'].update({"transport_url": transport_url})
-        self.result_dict['database'].update({"connection": db_connection})
+        self.result_dict["messaging"].update({"transport_url": transport_url})
+        self.result_dict["database"].update({"connection": db_connection})
 
-        available = (
-                messaging_available.value == 1
-                and database_available.value == 1
+        available = messaging_available.value == 1 and database_available.value == 1
+
+        return pluginbase.HealthcheckResult(
+            available=available, reason=[self.result_dict]
         )
-
-        return pluginbase.HealthcheckResult(available=available, reason=[self.result_dict])
