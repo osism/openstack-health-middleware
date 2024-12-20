@@ -1,7 +1,7 @@
 # openstack-health-middleware
 
 This middleware checks the healthiness of an OpenStack component by checking its
-configured database and messaging services (e.g. mariaDB and rabbitMQ).
+configured database and messaging services (e.g. MariaDB and RabbitMQ).
 
 In the future more checks, like e.g. log file checking will be implemented.
 
@@ -105,7 +105,7 @@ Date: Wed, 14 Aug 2024 08:56:02 GMT
 }
 ```
 
-## Future ideas:
+## Future ideas
 
 - check processes like nova-compute if they are running (e.g. because logs stopped being written)
 - check the logs for errors
