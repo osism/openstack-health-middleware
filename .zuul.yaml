@@ -3,16 +3,16 @@
     name: SECRET_OPENSTACK_HEALTH_MIDDLEWARE
     data:
       PYPI_API_TOKEN: !encrypted/pkcs1-oaep
-        - ZpWIB/LYMUsvxVi5xmuJpf62TIrvBR3R37ePDMvksb5dH1fUHtWxxKH4Mg0rpP/4oTK0h
-          Vp9VfCiP/Lm72tqblIWII3aeoiftWoKNapo/TCAfQDIW096ZnohD7eH8rnoMxtuwTmdwJ
-          9wUcOkFjW1KkrQO05Kz5bOEJv/FXvdUb7a74R4oeEFHDssfYM+uG9cjFjUyThEyhCOBAj
-          irohJft7yDUOzARW/L3ocJT0je9nxY6x8eVp88mE5vE1K0YvOQF7vfYlOok5isVYFTE2P
-          NnX1Ve3m95ji7B/FNRwXzcUyyY7/j0gh1fAeDcD76tS5GEHlTBuyo7ljpo4F3eoPUtI8g
-          ch6RrZT1idNYsIZlKQCuXcoulvZOIykNF4iQQKyrMkwePXDGx8hkGEaTaDfv8381W4IhE
-          eWH4hnuf0SCrlN7qnuejm2rXTNek+ZkrIYi8MpG1CUjGDDdpx3UG6Qftqx7f1gQvzS3Fc
-          qnRGBWQ8PxLfiahoAofW7fKHnbjHYbO9h5r3wfjSRkQWiuVJT8rEVwrRNu9pHikqqP+NZ
-          Lo7Yq0bJXZ46pnX6tpqI12vMZ8faUtcdOk/WD6ufNJiDI0WrDNiFxb1TRjY97s/bA3mr2
-          Re9lETL1dnNeXeOUrtoIPmsim8jax/PMdSdLPgrr8zc6VRLRsyLYaeEurnfz+E=
+        - RAh/PWu9Bp3nzIEl3G8nxPwY1CBuK0pifKAPJ0kgo+7CxFqLkvWSuAZ3gHtVZaOvK6Zbe
+          ATxj23tKCeQYbtpI8pUlNONHLYSfZsqnZxGwcZDXZdzrls4jNRHYvfhlt+QZRQonho1ek
+          X+Vq31mNg3I3EFbXbypF343KEz4apFPPFXDaBnuxU+wELSaMEYc+Bnxkr3yHHtsbDJ0hc
+          sqXS7IcJW7PHpivyRZQE/xlrkOUPEnAgRinzNkGq4Y2SavSEAPIzQsY8YTw48O5XHdOqL
+          0Wwqu+YYsnl68DC2a+KEcSEuH8JAweISlm2UTvbntbjyPcW86h6tEVJT2DYFpX8J7s75a
+          RzGOChbPJ4C7/9szdPeO2dOmzxqNCTHZK1xsPEuBomkAy2EEewvUeVnqoGPDLNSHd11Xe
+          erM0YnhCY7y9zdCu1oIXYEryC6b842+3ydPrJQvCLXsHcc0NM69CZ74opLrHH+disgnzw
+          xMEQEXdrNw+cmWpUTxnTUOcMqeRneXFq+YC+de8k260KlmzwjfJiF5E+gLInmVuB8lBXE
+          3GzdIK37v2OqDqu+v9H8P1oYV1X4coEPC9H5/6dgi9A9/npZeRLnpr8AdY+GRK4uYrGwf
+          5LhUR0HVPQD1BOaS7w6YCSxzQnySDAKopjM59ZmbWpQNSRxS7bIIoi6DwKuf1A=
 
 - job:
     name: openstack-health-middleware-publish-pypi-package
